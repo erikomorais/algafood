@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AtivacaoClienteService {
 
+
     private Notificador notificador;
 
     public AtivacaoClienteService(Notificador notificador) {
