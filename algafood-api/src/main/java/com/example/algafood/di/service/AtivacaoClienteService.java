@@ -4,8 +4,9 @@ import com.example.algafood.di.modelo.Cliente;
 import com.example.algafood.di.notificacao.Notificador;
 import org.springframework.stereotype.Component;
 
-@Component
+
 public class AtivacaoClienteService {
+
 
     private Notificador notificador;
 
