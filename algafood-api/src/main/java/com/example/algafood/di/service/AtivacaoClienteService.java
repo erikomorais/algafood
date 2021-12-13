@@ -12,7 +12,7 @@ public class AtivacaoClienteService {
 
     private Notificador notificador;
 
-    public AtivacaoClienteService(@Qualifier("email") Notificador notificador) {
+    public AtivacaoClienteService(@Qualifier("urgente") Notificador notificador) {
         this.notificador = notificador;
         System.out.println("AtivacaoClienteService.AtivacaoClienteService: " + notificador );
     }
