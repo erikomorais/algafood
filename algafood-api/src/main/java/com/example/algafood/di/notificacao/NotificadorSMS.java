@@ -5,14 +5,12 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 
 @Component
-public class NotificadorEmail implements Notificador {
+public class NotificadorSMS implements Notificador {
 
     private boolean caixaAlta;
-    private String hostServidorSmtp;
 
-    public NotificadorEmail() {
-        this.hostServidorSmtp = "host ServidorSmtp";
-        System.out.println("NotificadorEmail.NotificadorEmail");
+    public NotificadorSMS() {
+        System.out.println("NotificadorSMS.NotificadorSMS");
     }
 
 
@@ -21,8 +19,8 @@ public class NotificadorEmail implements Notificador {
         if (this.caixaAlta){
             mensagem = mensagem.toUpperCase(Locale.ROOT);
         }
-        System.out.printf("Notificando %s através do email %s usando SMTP %s: %s\n",
-                cliente.getNome(), cliente.getEmail(), this.hostServidorSmtp, mensagem);
+        System.out.printf("Notificando %s através do SMS ao número %S: %s\n",
+                cliente.getNome(), cliente.getTelefone(),  mensagem);
 
     }
     public void setCaixaAlta(boolean caixaAlta) {
