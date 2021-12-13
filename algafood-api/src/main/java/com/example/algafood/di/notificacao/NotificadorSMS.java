@@ -1,11 +1,13 @@
 package com.example.algafood.di.notificacao;
 import com.example.algafood.di.modelo.Cliente;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
 @Component
+@Qualifier("urgente")
 public class NotificadorSMS implements Notificador {
 
     private boolean caixaAlta;
