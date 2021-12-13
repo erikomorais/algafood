@@ -1,4 +1,5 @@
 package com.example.algafood.di.notificacao;
+import com.example.algafood.NivelUrgencia;
 import com.example.algafood.di.modelo.Cliente;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -6,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 
 @Component
-@Qualifier("normal")
+@TipoDoNotificador(NivelUrgencia.NORMAL)
 public class NotificadorEmail implements Notificador {
 
     private boolean caixaAlta;
