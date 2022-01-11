@@ -1,26 +1,23 @@
 package com.example.algafood.di.service;
 
-import com.example.algafood.NivelUrgencia;
+import com.example.algafood.di.notificacao.NivelUrgencia;
 import com.example.algafood.di.modelo.Cliente;
 import com.example.algafood.di.notificacao.Notificador;
 import com.example.algafood.di.notificacao.TipoDoNotificador;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 
 @Component
-
 public class AtivacaoClienteService {
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
-    private Notificador notificador;
-
-    public AtivacaoClienteService(@TipoDoNotificador(NivelUrgencia.NORMAL) Notificador notificador) {
-        this.notificador = notificador;
-        System.out.println("AtivacaoClienteService.AtivacaoClienteService: " + notificador );
-    }
     public void ativar(Cliente cliente){
         cliente.ativar();
-        notificador.notificar(cliente, "Seu cadastro no sistema está ativo!");
+        eventPublisher.publishEvent(new ClienteAtivadoEvent(cliente));
+
     }
 }
