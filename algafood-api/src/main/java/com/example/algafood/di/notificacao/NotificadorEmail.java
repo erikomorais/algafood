@@ -11,11 +11,11 @@ import java.util.Locale;
 @Component
 public class NotificadorEmail implements Notificador {
 
-    @Autowired
-    private  NotificadorProperties notificadorProperties;
+    private final NotificadorProperties notificadorProperties;
 
-    public NotificadorEmail() {
+    public NotificadorEmail(NotificadorProperties notificadorProperties) {
         System.out.println("Notificador email real");
+        this.notificadorProperties = notificadorProperties;
     }
 
     @Override
