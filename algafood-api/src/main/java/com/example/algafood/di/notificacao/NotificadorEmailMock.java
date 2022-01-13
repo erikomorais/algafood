@@ -3,7 +3,7 @@ import com.example.algafood.di.modelo.Cliente;
 import org.springframework.stereotype.Component;
 
 @Component
-@TipoDoNotificador(NivelUrgencia.SEM_URGENCIA)
+@TipoDoNotificador(NivelUrgencia.URGENT)
 public class NotificadorEmailMock implements Notificador {
 
     public NotificadorEmailMock() {
