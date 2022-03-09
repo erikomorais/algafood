@@ -1,23 +1,22 @@
 package com.example.algafood.domain.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Cozinha {
-    @EqualsAndHashCode.Include
+public class Permissao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String nome;
+
+    @Column(nullable = false)
+    private String descricao;
+
 }

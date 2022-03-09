@@ -5,19 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Cozinha {
-    @EqualsAndHashCode.Include
+public class FormaPagamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include
     private Long id;
 
-    @Column
-    private String nome;
+    @Column(nullable = false)
+    private String descricao;
 }
