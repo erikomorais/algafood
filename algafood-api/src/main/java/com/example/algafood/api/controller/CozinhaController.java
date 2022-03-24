@@ -2,6 +2,9 @@ package com.example.algafood.api.controller;
 
 import java.util.List;
 
+import com.example.algafood.api.model.CozinhasXmlWrapper;
+import com.example.algafood.domain.model.Cozinha;
+import com.example.algafood.domain.repository.CozinhaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,10 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.algaworks.algafood.api.model.CozinhasXmlWrapper;
-import com.algaworks.algafood.domain.model.Cozinha;
-import com.algaworks.algafood.domain.repository.CozinhaRepository;
 
 @RestController
 @RequestMapping(value = "/cozinhas")

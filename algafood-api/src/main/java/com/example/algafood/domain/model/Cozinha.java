@@ -1,5 +1,6 @@
 package com.example.algafood.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
