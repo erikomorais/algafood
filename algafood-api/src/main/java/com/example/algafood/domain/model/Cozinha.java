@@ -7,11 +7,13 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Objects;
 
+@JsonRootName("cozinha")
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 public class Cozinha {
+
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
