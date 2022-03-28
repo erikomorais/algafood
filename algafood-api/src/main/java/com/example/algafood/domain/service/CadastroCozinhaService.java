@@ -41,13 +41,14 @@ public class CadastroCozinhaService {
             Cozinha cozinhaAtual = cozinhaRepository.buscar(cozinhaId);
             if (cozinhaAtual != null) {
                 cozinhaRepository.remover(cozinhaAtual);
+                return ResponseEntity.noContent().build();
             }else {
                 return ResponseEntity.notFound().build();
             }
         }catch (DataIntegrityViolationException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        return ResponseEntity.noContent().build();
+
     }
 
     @PutMapping("/{cozinhaId}")
