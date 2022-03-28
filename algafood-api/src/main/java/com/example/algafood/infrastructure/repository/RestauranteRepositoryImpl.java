@@ -17,11 +17,12 @@ public class RestauranteRepositoryImpl implements RestauranteRepository {
 
     @Override
     public List<Restaurante> listar() {
-        return entityManager.createQuery("from Restaurante", Restaurante.class).getResultList();
+        return entityManager.createQuery("select r from Restaurante r", Restaurante.class).getResultList();
     }
 
     @Override
     public Restaurante buscar(Long id) {
+
         return entityManager.find(Restaurante.class, id);
     }
 
