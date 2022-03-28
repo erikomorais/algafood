@@ -1,7 +1,9 @@
 package com.example.algafood.infrastructure.repository;
 
+import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.repository.CozinhaRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +19,7 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
 
     @Override
     public List<Cozinha> listar() {
-        return entityManager.createQuery("from Cozinha", Cozinha.class).getResultList();
+        return entityManager.createQuery("select c from Cozinha c", Cozinha.class).getResultList();
     }
 
     @Override
@@ -33,8 +35,11 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
 
     @Transactional
     @Override
-    public void remover(Cozinha cozinha) {
-        cozinha = buscar(cozinha.getId());
+    public void remover(Long id) {
+        Cozinha cozinha = buscar(id);
+        if (cozinha == null){
+            throw new EmptyResultDataAccessException(1);
+        }
         entityManager.remove(cozinha);
     }
 }
