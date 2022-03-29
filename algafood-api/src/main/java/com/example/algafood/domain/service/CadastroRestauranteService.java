@@ -42,13 +42,16 @@ public class CadastroRestauranteService {
 
     public Restaurante atualizar(Long idRestaurante, Restaurante restaurante){
         Restaurante restauranteAtualizar = buscar(idRestaurante);
+        if (restauranteAtualizar == null){
+            throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de restaurantew com código %d", idRestaurante));
+        }
         if (restaurante.getCozinha() == null){
             throw new IllegalStateException(String.format("Cozinha não informada"));
         }
         Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
         if (cozinha == null) {
-            throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha com código %d", cozinhaId));
+            throw new IllegalStateException(String.format("Não existe cadastro de cozinha com código %d", cozinhaId));
         }
         BeanUtils.copyProperties(restaurante,restauranteAtualizar,"id");
         restauranteAtualizar.setCozinha(cozinha);

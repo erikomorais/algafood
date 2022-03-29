@@ -43,7 +43,9 @@ public class RestauranteController {
         try {
             restaurante = cadastroRestaurante.atualizar(idRestaurante, restaurante);
             return ResponseEntity.status(HttpStatus.OK).body(restaurante);
-        }catch (EntidadeNaoEncontradaException | IllegalStateException e){
+        }catch (EntidadeNaoEncontradaException e){
+            return ResponseEntity.notFound().build();
+        }catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
