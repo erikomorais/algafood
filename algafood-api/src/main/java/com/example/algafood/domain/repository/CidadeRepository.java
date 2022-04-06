@@ -8,6 +8,6 @@ public interface CidadeRepository {
     List<Cidade> listar();
     Cidade buscar(Long id);
     Cidade salvar(Cidade Cidade);
-    void remover(Cidade Cidade);
+    void remover(Long Cidade);
 
 }
