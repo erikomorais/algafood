@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -59,6 +60,18 @@ public class RestauranteController {
         }catch(EntidadeNaoEncontradaException e){
             return ResponseEntity.notFound().build();
 
+        }
+    }
+
+    @PatchMapping("/{idRestaurante}")
+    public ResponseEntity<?> atualizarParcial( @PathVariable Long idRestaurante, @RequestBody Map<String,Object> campos){
+        try {
+            Restaurante restaurante = cadastroRestaurante.atualizarParcial(idRestaurante, campos);
+            return ResponseEntity.status(HttpStatus.OK).body(restaurante);
+        }catch (EntidadeNaoEncontradaException e){
+            return ResponseEntity.notFound().build();
+        }catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

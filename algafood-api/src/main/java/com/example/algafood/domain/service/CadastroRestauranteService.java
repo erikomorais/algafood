@@ -4,12 +4,16 @@ import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.model.Restaurante;
 import com.example.algafood.domain.repository.CozinhaRepository;
 import com.example.algafood.domain.repository.RestauranteRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -61,5 +65,24 @@ public class CadastroRestauranteService {
         }catch (EmptyResultDataAccessException e){
             throw new EntidadeNaoEncontradaException(String.format("Restaurante com código %s",idRestaurante));
         }
+    }
+
+    public Restaurante atualizarParcial(Long idRestaurante, Map<String, Object> campos) {
+        Restaurante restauranteAtualizar = buscar(idRestaurante);
+        merge(campos,restauranteAtualizar);
+        return atualizar(idRestaurante,restauranteAtualizar);
+    }
+
+    private void merge(Map<String, Object> dadosOrigem, Restaurante restauranteAtualizar) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Restaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);
+
+        dadosOrigem.forEach((nomePropriedade,valorPropriedade)->{
+            Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
+            field.setAccessible(true);
+            Object novoValor = ReflectionUtils.getField(field,restauranteOrigem);
+            ReflectionUtils.setField(field,restauranteAtualizar,novoValor);
+
+        });
     }
 }
