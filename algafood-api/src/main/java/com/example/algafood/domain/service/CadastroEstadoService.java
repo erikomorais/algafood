@@ -2,7 +2,6 @@ package com.example.algafood.domain.service;
 
 import com.example.algafood.domain.exception.EntidadeEmUsoException;
 import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
-import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.model.Estado;
 import com.example.algafood.domain.repository.EstadoRepository;
 import lombok.AllArgsConstructor;
@@ -24,20 +23,18 @@ public class CadastroEstadoService {
 
 
     public List<Estado> listar() {
-        return estadoRepository.listar();
+        return estadoRepository.findAll();
     }
 
     public Estado buscar(Long estadoId) {
 
-        Estado estado = estadoRepository.buscar(estadoId);
-        if(estado == null) {
-            throw new EntidadeNaoEncontradaException(String.format("Estado de id %s não encontrado", estadoId));
-        }
-        return estado;
+        return estadoRepository.findById(estadoId).orElseThrow( ()->
+                new EntidadeNaoEncontradaException(String.format("Estado de id %s não encontrado", estadoId))
+        );
     }
 
     public Estado adicionar(Estado estado) {
-        estado = estadoRepository.salvar(estado);
+        estado = estadoRepository.save(estado);
         return estado;
     }
 
@@ -45,12 +42,12 @@ public class CadastroEstadoService {
         Estado estadoAtual = buscar(estadoId);
 
         BeanUtils.copyProperties(estado, estadoAtual, "id");
-        return estadoRepository.salvar(estadoAtual);
+        return estadoRepository.save(estadoAtual);
     }
 
     public void excluir(Long estadoId ) {
         try{
-            estadoRepository.remover(estadoId);
+            estadoRepository.deleteById(estadoId);
         }catch (DataIntegrityViolationException e){
             throw new EntidadeEmUsoException(String.format("Estado com dódigo %s",estadoId));
         }catch (EmptyResultDataAccessException e){

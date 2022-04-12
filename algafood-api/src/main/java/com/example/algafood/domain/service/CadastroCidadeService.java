@@ -5,7 +5,6 @@ import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.exception.EstadoInexistenteException;
 import com.example.algafood.domain.exception.EstadoNaoInformadoException;
 import com.example.algafood.domain.model.Cidade;
-import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.model.Estado;
 import com.example.algafood.domain.repository.CidadeRepository;
 import com.example.algafood.domain.repository.EstadoRepository;
@@ -23,15 +22,13 @@ public class CadastroCidadeService {
     private CidadeRepository cidadeRepository;
     private EstadoRepository estadoRepository;
     public List<Cidade> listar() {
-        return cidadeRepository.listar();
+        return cidadeRepository.findAll();
     }
 
     public Cidade buscar(Long cidadeId) {
-        Cidade cidade = cidadeRepository.buscar(cidadeId);
-        if (cidade == null){
-            throw new EntidadeNaoEncontradaException(String.format("Cidade com coódigo %d não encontrada", cidadeId));
-        }
-        return cidade;
+        return cidadeRepository.findById(cidadeId)
+                .orElseThrow(()->new EntidadeNaoEncontradaException(
+                        String.format("Cidade com coódigo %d não encontrada", cidadeId)));
     }
 
     public Cidade adicionar(Cidade cidade) {
@@ -39,12 +36,11 @@ public class CadastroCidadeService {
             throw new EstadoNaoInformadoException("Estado não informado");
         }
         Long estadoId = cidade.getEstado().getId();
-        Estado estado = estadoRepository.buscar(estadoId);
-        if (estado == null) {
-            throw new EstadoInexistenteException(String.format("Não existe cadastro de estado com código %d", estadoId));
-        }
+        Estado estado = estadoRepository.findById(estadoId)
+                .orElseThrow(()->new EstadoInexistenteException(
+                        String.format("Não existe cadastro de estado com código %d", estadoId)));
         cidade.setEstado(estado);
-        return cidadeRepository.salvar(cidade);
+        return cidadeRepository.save(cidade);
     }
 
     public Cidade atualizar(Long cidadeId, Cidade cidade) {
@@ -53,19 +49,18 @@ public class CadastroCidadeService {
             throw new EstadoNaoInformadoException("Estado não pode ser nulo");
         }
         Long estadoId = cidade.getEstado().getId();
-        Estado estado = estadoRepository.buscar(estadoId);
-        if (estado == null) {
-            throw new EstadoInexistenteException(String.format("Não existe cadastro de estado com código %d", estadoId));
-        }
+        Estado estado = estadoRepository.findById(estadoId).orElseThrow(()->new EstadoInexistenteException(
+                String.format("Não existe cadastro de estado com código %d", estadoId)));
+
         cidade.setEstado(estado);
         BeanUtils.copyProperties(cidade,cidadeAtualizar, "id");
-        return cidadeRepository.salvar(cidadeAtualizar);
+        return cidadeRepository.save(cidadeAtualizar);
 
     }
 
     public void excluir(Long cidadeId) {
         try{
-            cidadeRepository.remover(cidadeId);
+            cidadeRepository.deleteById(cidadeId);
         }catch (DataIntegrityViolationException e){
             throw new EntidadeEmUsoException(String.format("Estado com dódigo %s",cidadeId));
         }catch (EmptyResultDataAccessException e){

@@ -19,6 +19,6 @@ public class TesteController {
 
     @GetMapping("/cozinhas/por-nome")
     public List<Cozinha> cozinhasPorNome(@RequestParam String nome){
-        return cozinhaRepository.consultarPorNome(nome);
+        return cozinhaRepository.findByNomeContaining(nome);
     }
 }

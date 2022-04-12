@@ -22,32 +22,30 @@ public class CadastroCozinhaService {
 
 
     public List<Cozinha> listar() {
-        return cozinhaRepository.listar();
+        return cozinhaRepository.findAll();
     }
 
     public Cozinha buscar(Long cozinhaId) {
-        try {
-            Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
-            return cozinha;
-        }catch(EmptyResultDataAccessException e){
-            throw new EntidadeNaoEncontradaException(String.format("Cozinha de id %s não encontrada", cozinhaId));
-        }
+        return cozinhaRepository.findById(cozinhaId)
+                .orElseThrow(()-> new EntidadeNaoEncontradaException(String.format("Cozinha de id %s não encontrada",
+                        cozinhaId)));
+
     }
 
     public Cozinha adicionar(Cozinha cozinha) {
-        cozinha = cozinhaRepository.salvar(cozinha);
+        cozinha = cozinhaRepository.save(cozinha);
         return cozinha;
     }
 
     public Cozinha atualizar(@PathVariable Long cozinhaId ,@RequestBody Cozinha cozinha) {
         Cozinha cozinhaAtual = buscar(cozinhaId);
         BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
-        return cozinhaRepository.salvar(cozinhaAtual);
+        return cozinhaRepository.save(cozinhaAtual);
     }
 
     public void excluir(Long cozinhaId ) {
         try{
-            cozinhaRepository.remover(cozinhaId);
+            cozinhaRepository.deleteById(cozinhaId);
         }catch (DataIntegrityViolationException e){
             throw new EntidadeEmUsoException(String.format("Cozinha com dódigo %s",cozinhaId));
         }catch (EmptyResultDataAccessException e){
