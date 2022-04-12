@@ -3,5 +3,6 @@
 /algafood-api/target/**
 /algafood-api/target/classes/import.sql
 /algafood-api/target/classes/com/example/algafood/jpa/InclusaoCozinhaMain.class
-/algafood-api/target/classes/com/example/algafood/jpa/InclusaoRestauranteMain.class
+/algafood-api/target/classes/com/example/algafood/jpa/InclusaoRestauranteMain.clas
+/.idea
 
