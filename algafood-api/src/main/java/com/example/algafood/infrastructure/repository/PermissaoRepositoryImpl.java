@@ -2,14 +2,14 @@ package com.example.algafood.infrastructure.repository;
 
 import com.example.algafood.domain.model.Permissao;
 import com.example.algafood.domain.repository.PermissaoRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Component
+@Repository
 public class PermissaoRepositoryImpl implements PermissaoRepository {
 
     @PersistenceContext
