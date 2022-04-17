@@ -49,14 +49,14 @@ public class CadastroCozinhaService {
         }catch (DataIntegrityViolationException e){
             throw new EntidadeEmUsoException(String.format("Cozinha com dódigo %s",cozinhaId));
         }catch (EmptyResultDataAccessException e){
-            throw new EntidadeNaoEncontradaException(String.format("Cozinha com dódigo %s não encontrada",cozinhaId));
+            throw new EntidadeNaoEncontradaException(String.format("Cozinha com código %s não encontrada",cozinhaId));
         }
-
-
-
     }
 
 
-
-
+    public Cozinha buscarPorNome(String nome) {
+        return cozinhaRepository.findByNome(nome).orElseThrow(
+                ()-> new EntidadeNaoEncontradaException(String.format("Não há cozinha cadastrada com nome %s",nome))
+        );
+    }
 }

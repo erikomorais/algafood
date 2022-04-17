@@ -6,7 +6,6 @@ import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.service.CadastroCozinhaService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,6 +64,5 @@ public class CozinhaController {
         }
 
     }
-
 
 }
