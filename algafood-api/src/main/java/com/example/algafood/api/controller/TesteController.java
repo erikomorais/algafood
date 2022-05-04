@@ -1,5 +1,6 @@
 package com.example.algafood.api.controller;
 
+import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.model.Restaurante;
 import com.example.algafood.domain.repository.CozinhaRepository;
@@ -76,5 +77,11 @@ public class TesteController {
     public List<Restaurante> restaurantesComFreteGratis(String nome) {
 
         return restauranteRepository.findComFretegratis(nome);
+    }
+
+    @GetMapping("/restaurantes/primeiro")
+    public Restaurante primeiro() {
+
+        return restauranteRepository.buscarPrimeiro().orElseThrow(()->new EntidadeNaoEncontradaException("restaurante não encontrado"));
     }
 }
