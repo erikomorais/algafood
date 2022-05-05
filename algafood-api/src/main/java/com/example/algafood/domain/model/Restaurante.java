@@ -1,5 +1,6 @@
 package com.example.algafood.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,4 +36,8 @@ public class Restaurante {
     @JoinTable(name="restaurante_forma_pagamento",
             joinColumns = @JoinColumn(name = "restaurante_id"), inverseJoinColumns = @JoinColumn(name="forma_pagamento_id"))
     private List<FormaPagamento> formasPagamento = new ArrayList<>();
+
+    @Embedded
+    @JsonIgnore
+    private Endereco endereco;
 }
