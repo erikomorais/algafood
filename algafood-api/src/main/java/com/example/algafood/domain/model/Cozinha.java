@@ -1,12 +1,14 @@
 package com.example.algafood.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonRootName("cozinha")
 @Getter
@@ -21,6 +23,10 @@ public class Cozinha {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String nome;
+
+    @OneToMany(mappedBy = "cozinha")
+    @JsonIgnore
+    private List<Restaurante> restaurantes = new ArrayList<>();
 }

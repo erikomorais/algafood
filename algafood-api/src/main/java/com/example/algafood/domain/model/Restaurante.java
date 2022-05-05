@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -20,11 +19,13 @@ public class Restaurante {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
-    @Column(name="taxa_frete")
+    @Column(name="taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
     @ManyToOne
+    @JoinColumn(name="cozinha_id", nullable = false)
     private Cozinha cozinha;
 }
