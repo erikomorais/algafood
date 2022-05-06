@@ -1,5 +1,6 @@
 package com.example.algafood.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,5 +29,6 @@ public class Produto {
     private Boolean ativo;
 
     @ManyToOne
+    @JsonIgnore
     private Restaurante restaurante;
 }
