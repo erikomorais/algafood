@@ -1,12 +1,10 @@
 package com.example.algafood.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Embeddable
 @Getter
@@ -22,7 +20,9 @@ public class Endereco {
     private String complemento;
     @Column(name="endereco_bairro")
     private String bairro;
-    @ManyToOne
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="endereco_cidade_id")
     private Cidade cidade;
 }
