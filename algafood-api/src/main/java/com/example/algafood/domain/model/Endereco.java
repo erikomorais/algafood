@@ -1,6 +1,6 @@
 package com.example.algafood.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +21,8 @@ public class Endereco {
     @Column(name="endereco_bairro")
     private String bairro;
 
-    @JsonIgnore
+    //@JsonIgnore
+    @JsonIgnoreProperties("hibernateLazyInitializer")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="endereco_cidade_id")
     private Cidade cidade;
