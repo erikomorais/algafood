@@ -1,8 +1,6 @@
 package com.example.algafood.api.controller;
 
 import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
-import com.example.algafood.domain.exception.EstadoInexistenteException;
-import com.example.algafood.domain.exception.EstadoNaoInformadoException;
 import com.example.algafood.domain.model.Cidade;
 import com.example.algafood.domain.service.CadastroCidadeService;
 import lombok.AllArgsConstructor;
@@ -20,8 +18,8 @@ public class CidadeController {
     private CadastroCidadeService cadastroCidadeService;
 
     @GetMapping
-    public ResponseEntity<List<Cidade>> listar() {
-        return ResponseEntity.ok(cadastroCidadeService.listar());
+    public List<Cidade> listar() {
+        return cadastroCidadeService.listar();
     }
 
     @GetMapping("/{cidadeId}")
@@ -36,15 +34,8 @@ public class CidadeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> adicionar(@RequestBody Cidade cidade) {
-        try {
-            cidade = cadastroCidadeService.adicionar(cidade);
-            return ResponseEntity.ok(cidade);
-        }catch (EstadoNaoInformadoException | EstadoInexistenteException e){
-            return  ResponseEntity.badRequest().body(e.getMessage());
-        }
-
-
+    public Cidade adicionar(@RequestBody Cidade cidade) {
+        return cadastroCidadeService.adicionar(cidade);
     }
 
     @PutMapping("/{cidadeId}")
