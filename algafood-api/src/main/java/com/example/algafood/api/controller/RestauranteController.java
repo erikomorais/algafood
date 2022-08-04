@@ -1,6 +1,5 @@
 package com.example.algafood.api.controller;
 
-import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.model.Restaurante;
 import com.example.algafood.domain.service.CadastroRestauranteService;
 import lombok.AllArgsConstructor;
@@ -25,53 +24,31 @@ public class RestauranteController {
     }
 
     @GetMapping("/{idRestaurante}")
-    public ResponseEntity<Restaurante> buscar(@PathVariable Long idRestaurante){
-        return ResponseEntity.ok(cadastroRestaurante.buscar(idRestaurante));
+    public Restaurante buscar(@PathVariable Long idRestaurante){
+       return cadastroRestaurante.buscar(idRestaurante);
     }
 
     @PostMapping
-    public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante){
-        try {
-            restaurante = cadastroRestaurante.adicionar(restaurante);
-            return ResponseEntity.status(HttpStatus.CREATED).body(restaurante);
-        }catch (EntidadeNaoEncontradaException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    public Restaurante adicionar(@RequestBody Restaurante restaurante){
+       return cadastroRestaurante.adicionar(restaurante);
     }
 
     @PutMapping("/{idRestaurante}")
-    public ResponseEntity<?> atualizar( @PathVariable Long idRestaurante, @RequestBody Restaurante restaurante){
-        try {
-            restaurante = cadastroRestaurante.atualizar(idRestaurante, restaurante);
-            return ResponseEntity.status(HttpStatus.OK).body(restaurante);
-        }catch (EntidadeNaoEncontradaException e){
-            return ResponseEntity.notFound().build();
-        }catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public Restaurante atualizar( @PathVariable Long idRestaurante, @RequestBody Restaurante restaurante){
+       restaurante = cadastroRestaurante.atualizar(idRestaurante, restaurante);
+       return restaurante;
     }
 
 
     @DeleteMapping("/{idRestaurante}")
-    public ResponseEntity<Void> excluir(@PathVariable Long idRestaurante){
-        try {
-            cadastroRestaurante.excluir(idRestaurante);
-            return ResponseEntity.noContent().build();
-        }catch(EntidadeNaoEncontradaException e){
-            return ResponseEntity.notFound().build();
-
-        }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public void excluir(@PathVariable Long idRestaurante){
+       cadastroRestaurante.excluir(idRestaurante);
     }
 
     @PatchMapping("/{idRestaurante}")
-    public ResponseEntity<?> atualizarParcial( @PathVariable Long idRestaurante, @RequestBody Map<String,Object> campos){
-        try {
-            Restaurante restaurante = cadastroRestaurante.atualizarParcial(idRestaurante, campos);
-            return ResponseEntity.status(HttpStatus.OK).body(restaurante);
-        }catch (EntidadeNaoEncontradaException e){
-            return ResponseEntity.notFound().build();
-        }catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public Restaurante atualizarParcial( @PathVariable Long idRestaurante, @RequestBody Map<String,Object> campos){
+       return cadastroRestaurante.atualizarParcial(idRestaurante, campos);
     }
 }

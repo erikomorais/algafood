@@ -19,6 +19,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CadastroEstadoService {
 
+    public static final String ESTADO_NAO_ENCONTRADO = "Estado com dódigo %s não encontrada";
+    public static final String ESTADO_EM_USO = "Estado com dódigo %s em uso";
     private EstadoRepository estadoRepository;
 
 
@@ -29,7 +31,7 @@ public class CadastroEstadoService {
     public Estado buscar(Long estadoId) {
 
         return estadoRepository.findById(estadoId).orElseThrow( ()->
-                new EntidadeNaoEncontradaException(String.format("Estado de id %s não encontrado", estadoId))
+                new EntidadeNaoEncontradaException(String.format(ESTADO_NAO_ENCONTRADO, estadoId))
         );
     }
 
@@ -40,7 +42,6 @@ public class CadastroEstadoService {
 
     public Estado atualizar(@PathVariable Long estadoId ,@RequestBody Estado estado) {
         Estado estadoAtual = buscar(estadoId);
-
         BeanUtils.copyProperties(estado, estadoAtual, "id");
         return estadoRepository.save(estadoAtual);
     }
@@ -49,9 +50,9 @@ public class CadastroEstadoService {
         try{
             estadoRepository.deleteById(estadoId);
         }catch (DataIntegrityViolationException e){
-            throw new EntidadeEmUsoException(String.format("Estado com dódigo %s",estadoId));
+            throw new EntidadeEmUsoException(String.format(ESTADO_EM_USO,estadoId));
         }catch (EmptyResultDataAccessException e){
-            throw new EntidadeNaoEncontradaException(String.format("Estado com dódigo %s não encontrada",estadoId));
+            throw new EntidadeNaoEncontradaException(String.format(ESTADO_NAO_ENCONTRADO,estadoId));
         }
 
     }

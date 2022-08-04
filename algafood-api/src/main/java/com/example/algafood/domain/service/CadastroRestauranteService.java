@@ -1,8 +1,8 @@
 package com.example.algafood.domain.service;
+
 import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.model.Restaurante;
-import com.example.algafood.domain.repository.CozinhaRepository;
 import com.example.algafood.domain.repository.RestauranteRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -19,8 +19,10 @@ import java.util.Map;
 @AllArgsConstructor
 public class CadastroRestauranteService {
 
+    public static final String RESTAURANTE_NAO_ENCONTRADO = "Restaurante com cósigo %d não encontrado";
+    public static final String COZINHA_NAO_INFORMADA = "Cozinha não informada";
     private RestauranteRepository restauranteRepository;
-    private CozinhaRepository cozinhaRepository;
+    private CadastroCozinhaService cozinhaRepository;
 
     public List<Restaurante> listar() {
         return restauranteRepository.findAll();
@@ -28,15 +30,13 @@ public class CadastroRestauranteService {
 
     public Restaurante buscar(Long idRestaurante) {
         return restauranteRepository.findById(idRestaurante).orElseThrow(
-                ()->new EntidadeNaoEncontradaException(String.format("Restaurante com cósigo %d", idRestaurante))
+                ()->new EntidadeNaoEncontradaException(String.format(RESTAURANTE_NAO_ENCONTRADO, idRestaurante))
         );
     }
 
     public Restaurante adicionar(Restaurante restaurante){
         Long cozinhaId = restaurante.getCozinha().getId();
-        Cozinha cozinha = cozinhaRepository.findById(cozinhaId).orElseThrow(
-                ()-> new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha com código %d",
-                        cozinhaId)));
+        Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
         restaurante.setCozinha(cozinha);
         return restauranteRepository.save(restaurante);
     }
@@ -44,12 +44,10 @@ public class CadastroRestauranteService {
     public Restaurante atualizar(Long idRestaurante, Restaurante restaurante){
         Restaurante restauranteAtualizar = buscar(idRestaurante);
         if (restaurante.getCozinha() == null){
-            throw new NullPointerException("Cozinha não informada");
+            throw new NullPointerException(COZINHA_NAO_INFORMADA);
         }
         Long cozinhaId = restaurante.getCozinha().getId();
-        Cozinha cozinha = cozinhaRepository.findById(cozinhaId).orElseThrow(
-                ()-> new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha com código %d",
-                        cozinhaId)));
+        Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
         BeanUtils.copyProperties(restaurante,restauranteAtualizar,"id");
         restauranteAtualizar.setCozinha(cozinha);
         return restauranteRepository.save(restauranteAtualizar);
@@ -59,7 +57,7 @@ public class CadastroRestauranteService {
         try {
             restauranteRepository.deleteById(idRestaurante);
         }catch (EmptyResultDataAccessException e){
-            throw new EntidadeNaoEncontradaException(String.format("Restaurante com código %s",idRestaurante));
+            throw new EntidadeNaoEncontradaException(String.format(RESTAURANTE_NAO_ENCONTRADO,idRestaurante));
         }
     }
 
