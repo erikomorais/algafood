@@ -1,6 +1,5 @@
 package com.example.algafood.api.controller;
 
-import com.example.algafood.domain.exception.EntidadeEmUsoException;
 import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.service.CadastroCozinhaService;
@@ -53,16 +52,9 @@ public class CozinhaController {
     }
 
     @DeleteMapping("/{cozinhaId}")
-    public ResponseEntity<Void> remover(@PathVariable Long cozinhaId ) {
-        try {
-            cadastroCozinhaService.excluir(cozinhaId);
-            return ResponseEntity.noContent().build();
-        }catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.notFound().build();
-        }catch (EntidadeEmUsoException e ){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remover(@PathVariable Long cozinhaId ) {
+           cadastroCozinhaService.excluir(cozinhaId);
     }
 
 }
