@@ -1,6 +1,5 @@
 package com.example.algafood.api.controller;
 
-import com.example.algafood.domain.exception.EntidadeEmUsoException;
 import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.exception.EstadoInexistenteException;
 import com.example.algafood.domain.exception.EstadoNaoInformadoException;
@@ -49,29 +48,14 @@ public class CidadeController {
     }
 
     @PutMapping("/{cidadeId}")
-    public ResponseEntity<?> atualizar(@PathVariable Long cidadeId ,@RequestBody Cidade cidade) {
-        try {
-            Cidade cidadeAtual = cadastroCidadeService.atualizar(cidadeId, cidade);
-            return ResponseEntity.ok(cidadeAtual);
-        }catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.notFound().build();
-        }catch (EstadoNaoInformadoException | EstadoInexistenteException  e){
-            return  ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public Cidade atualizar(@PathVariable Long cidadeId ,@RequestBody Cidade cidade) {
+            return  cadastroCidadeService.atualizar(cidadeId, cidade);
 
     }
 
     @DeleteMapping("/{cidadeId}")
-    public ResponseEntity<Void> remover(@PathVariable Long cidadeId ) {
-        try {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remover(@PathVariable Long cidadeId ) {
             cadastroCidadeService.excluir(cidadeId);
-            return ResponseEntity.noContent().build();
-        } catch (EntidadeNaoEncontradaException e){
-            return  ResponseEntity.notFound().build();
-        }
-        catch (EntidadeEmUsoException e ){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
     }
 }
