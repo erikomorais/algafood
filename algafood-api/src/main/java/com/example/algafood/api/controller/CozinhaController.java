@@ -1,11 +1,9 @@
 package com.example.algafood.api.controller;
 
-import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.service.CadastroCozinhaService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,13 +21,10 @@ public class CozinhaController {
     }
 
     @GetMapping("/{cozinhaId}")
-    public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
-        try{
+    @ResponseStatus(HttpStatus.OK)
+    public Cozinha buscar(@PathVariable Long cozinhaId) {
         Cozinha cozinha = cadastroCozinhaService.buscar(cozinhaId);
-         return ResponseEntity.ok(cozinha);
-        }  catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return cozinha;
     }
 
     @PostMapping
@@ -41,14 +36,10 @@ public class CozinhaController {
       }
 
     @PutMapping("/{cozinhaId}")
-    public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId ,@RequestBody Cozinha cozinha) {
-        try {
+    @ResponseStatus(HttpStatus.OK)
+    public Cozinha atualizar(@PathVariable Long cozinhaId ,@RequestBody Cozinha cozinha) {
             Cozinha cozinhaAtual = cadastroCozinhaService.atualizar(cozinhaId, cozinha);
-            return ResponseEntity.ok(cozinhaAtual);
-        }catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.notFound().build();
-        }
-
+            return cozinhaAtual;
     }
 
     @DeleteMapping("/{cozinhaId}")
