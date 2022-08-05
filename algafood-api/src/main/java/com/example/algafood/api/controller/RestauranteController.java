@@ -1,5 +1,7 @@
 package com.example.algafood.api.controller;
 
+import com.example.algafood.domain.exception.CozinhaNaoEncontradaException;
+import com.example.algafood.domain.exception.NegocioException;
 import com.example.algafood.domain.model.Restaurante;
 import com.example.algafood.domain.service.CadastroRestauranteService;
 import lombok.AllArgsConstructor;
@@ -31,13 +33,20 @@ public class RestauranteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Restaurante adicionar(@RequestBody Restaurante restaurante){
-       return cadastroRestaurante.adicionar(restaurante);
+       try {
+           return cadastroRestaurante.adicionar(restaurante);
+       }catch (CozinhaNaoEncontradaException e){
+           throw new NegocioException(e.getMessage());
+       }
     }
 
     @PutMapping("/{idRestaurante}")
     public Restaurante atualizar( @PathVariable Long idRestaurante, @RequestBody Restaurante restaurante){
-       restaurante = cadastroRestaurante.atualizar(idRestaurante, restaurante);
-       return restaurante;
+        try {
+           return cadastroRestaurante.atualizar(idRestaurante, restaurante);
+        }catch (CozinhaNaoEncontradaException e){
+            throw new NegocioException(e.getMessage());
+        }
     }
 
 

@@ -1,7 +1,7 @@
 package com.example.algafood.domain.service;
 
+import com.example.algafood.domain.exception.CozinhaNaoEncontradaException;
 import com.example.algafood.domain.exception.EntidadeEmUsoException;
-import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.repository.CozinhaRepository;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CadastroCozinhaService {
 
-    public static final String COZINHA_NAO_ENCONTRADA = "Cozinha de id %s não encontrada";
+
     public static final String COZINHA_EM_USO = "Cozinha com código %s em uso";
     private CozinhaRepository cozinhaRepository;
 
@@ -29,8 +30,8 @@ public class CadastroCozinhaService {
 
     public Cozinha buscar(Long cozinhaId) {
         return cozinhaRepository.findById(cozinhaId)
-                .orElseThrow(()-> new EntidadeNaoEncontradaException(String.format(COZINHA_NAO_ENCONTRADA,
-                        cozinhaId)));
+                .orElseThrow(()-> new CozinhaNaoEncontradaException(
+                        cozinhaId));
     }
 
     public void excluir(Long cozinhaId ) {
@@ -39,7 +40,7 @@ public class CadastroCozinhaService {
         }catch (DataIntegrityViolationException e){
             throw new EntidadeEmUsoException(String.format(COZINHA_EM_USO,cozinhaId));
         }catch (EmptyResultDataAccessException e){
-            throw new EntidadeNaoEncontradaException(String.format(COZINHA_NAO_ENCONTRADA,cozinhaId));
+            throw new CozinhaNaoEncontradaException(cozinhaId);
         }
     }
 
@@ -59,7 +60,7 @@ public class CadastroCozinhaService {
 
     public Cozinha buscarPorNome(String nome) {
         return cozinhaRepository.findByNome(nome).orElseThrow(
-                ()-> new EntidadeNaoEncontradaException(String.format("Não há cozinha cadastrada com nome %s",nome))
+                ()-> new CozinhaNaoEncontradaException(String.format("Não há cozinha cadastrada com nome %s",nome))
         );
     }
 }

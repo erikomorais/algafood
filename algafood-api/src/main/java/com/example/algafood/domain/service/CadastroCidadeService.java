@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class CadastroCidadeService {
-    public static final String CIDADE_NAO_ENCONTRADA = "Cidade com coódigo %d não encontrada";
+
     public static final String ESTADO_NAO_INFORMADO = "Estado não informado";
     public static final String CIDADE_EM_USO = "Cidade com código %s está em uso";
     private CidadeRepository cidadeRepository;
@@ -26,8 +26,7 @@ public class CadastroCidadeService {
 
     public Cidade buscarOuFahar(Long cidadeId) {
         return cidadeRepository.findById(cidadeId)
-                .orElseThrow(()->new EntidadeNaoEncontradaException(
-                        String.format(CIDADE_NAO_ENCONTRADA, cidadeId)));
+                .orElseThrow(()->new CidadeNaoEncontradaException(cidadeId));
     }
 
     public Cidade adicionar(Cidade cidade) {
@@ -57,7 +56,7 @@ public class CadastroCidadeService {
         }catch (DataIntegrityViolationException e){
             throw new EntidadeEmUsoException(String.format(CIDADE_EM_USO,cidadeId));
         }catch (EmptyResultDataAccessException e){
-            throw new EntidadeNaoEncontradaException(String.format(CIDADE_NAO_ENCONTRADA,cidadeId));
+            throw new CidadeNaoEncontradaException(cidadeId);
         }
     }
 }
