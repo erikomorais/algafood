@@ -1,7 +1,7 @@
 package com.example.algafood.domain.service;
 
 import com.example.algafood.domain.exception.EntidadeEmUsoException;
-import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.example.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.example.algafood.domain.model.Estado;
 import com.example.algafood.domain.repository.EstadoRepository;
 import lombok.AllArgsConstructor;
@@ -18,20 +18,15 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class CadastroEstadoService {
-
-    public static final String ESTADO_NAO_ENCONTRADO = "Estado com dódigo %s não encontrada";
-    public static final String ESTADO_EM_USO = "Estado com dódigo %s em uso";
+    public static final String ESTADO_EM_USO = "Estado com código %s em uso";
     private EstadoRepository estadoRepository;
-
-
     public List<Estado> listar() {
         return estadoRepository.findAll();
     }
 
-    public Estado buscar(Long estadoId) {
-
+    public Estado buscarOuFalhar(Long estadoId) {
         return estadoRepository.findById(estadoId).orElseThrow( ()->
-                new EntidadeNaoEncontradaException(String.format(ESTADO_NAO_ENCONTRADO, estadoId))
+            new EstadoNaoEncontradoException(estadoId)
         );
     }
 
@@ -41,7 +36,7 @@ public class CadastroEstadoService {
     }
 
     public Estado atualizar(@PathVariable Long estadoId ,@RequestBody Estado estado) {
-        Estado estadoAtual = buscar(estadoId);
+        Estado estadoAtual = buscarOuFalhar(estadoId);
         BeanUtils.copyProperties(estado, estadoAtual, "id");
         return estadoRepository.save(estadoAtual);
     }
@@ -52,7 +47,7 @@ public class CadastroEstadoService {
         }catch (DataIntegrityViolationException e){
             throw new EntidadeEmUsoException(String.format(ESTADO_EM_USO,estadoId));
         }catch (EmptyResultDataAccessException e){
-            throw new EntidadeNaoEncontradaException(String.format(ESTADO_NAO_ENCONTRADO,estadoId));
+            throw new EstadoNaoEncontradoException(estadoId);
         }
 
     }

@@ -1,9 +1,6 @@
 package com.example.algafood.domain.service;
 
-import com.example.algafood.domain.exception.EntidadeEmUsoException;
-import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
-import com.example.algafood.domain.exception.EstadoNaoInformadoException;
-import com.example.algafood.domain.exception.NegocioException;
+import com.example.algafood.domain.exception.*;
 import com.example.algafood.domain.model.Cidade;
 import com.example.algafood.domain.model.Estado;
 import com.example.algafood.domain.repository.CidadeRepository;
@@ -27,39 +24,32 @@ public class CadastroCidadeService {
         return cidadeRepository.findAll();
     }
 
-    public Cidade buscar(Long cidadeId) {
+    public Cidade buscarOuFahar(Long cidadeId) {
         return cidadeRepository.findById(cidadeId)
                 .orElseThrow(()->new EntidadeNaoEncontradaException(
                         String.format(CIDADE_NAO_ENCONTRADA, cidadeId)));
     }
 
     public Cidade adicionar(Cidade cidade) {
-        if (cidade.getEstado()== null ){
+        if (cidade.getEstado() == null ){
             throw new EstadoNaoInformadoException(ESTADO_NAO_INFORMADO);
         }
         Long estadoId = cidade.getEstado().getId();
-        try {
-            Estado estado = cadastroEstadoService.buscar(estadoId);
-            cidade.setEstado(estado);
-            return cidadeRepository.save(cidade);
-        }catch (EntidadeNaoEncontradaException e){
-            throw new NegocioException( e.getMessage());
-        }
+        Estado estado = cadastroEstadoService.buscarOuFalhar(estadoId);
+        cidade.setEstado(estado);
+        return cidadeRepository.save(cidade);
     }
 
     public Cidade atualizar(Long cidadeId, Cidade cidade) {
-        Cidade cidadeAtualizar = buscar(cidadeId);
+        Cidade cidadeAtualizar = buscarOuFahar(cidadeId);
         if (cidade.getEstado() == null ){
             throw new EstadoNaoInformadoException(ESTADO_NAO_INFORMADO);
         }
         BeanUtils.copyProperties(cidade, cidadeAtualizar, "id");
-        try {
-            Estado estado = cadastroEstadoService.buscar(cidade.getEstado().getId());
-            cidade.setEstado(estado);
-            return cidadeRepository.save(cidadeAtualizar);
-        }catch (EntidadeNaoEncontradaException e){
-            throw new NegocioException( e.getMessage());
-        }
+        Estado estado = cadastroEstadoService.buscarOuFalhar(cidade.getEstado().getId());
+        cidade.setEstado(estado);
+        return cidadeRepository.save(cidadeAtualizar);
+
     }
     public void excluir(Long cidadeId) {
         try{
