@@ -1,5 +1,6 @@
 package com.example.algafood.api.exceptionhandler;
 
+import com.example.algafood.domain.exception.EntidadeEmUsoException;
 import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.exception.NegocioException;
 import org.springframework.http.HttpStatus;
@@ -13,12 +14,22 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class ApiExceptionHandler {
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
-    public ResponseEntity<ApiError> trataEntidadeNaoEncontrada(EntidadeNaoEncontradaException e){
+    public ResponseEntity<ApiError> trataEntidadeNaoEncontradaException(EntidadeNaoEncontradaException e){
         ApiError error = ApiError.builder()
                 .dataHora(LocalDateTime.now())
                 .mensagem(e.getMessage())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
+
+    @ExceptionHandler(EntidadeEmUsoException.class)
+    public ResponseEntity<ApiError> trataEntidadeEmUsoException(EntidadeEmUsoException e){
+        ApiError error = ApiError.builder()
+                .dataHora(LocalDateTime.now())
+                .mensagem(e.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(error);
     }
     @ExceptionHandler(NegocioException.class)
@@ -40,5 +51,7 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                 .body(error);
     }
+
+
 
 }
