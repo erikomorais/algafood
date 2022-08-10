@@ -6,6 +6,7 @@ import com.example.algafood.domain.exception.RestauranteNaoEncontradoException;
 import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.model.Restaurante;
 import com.example.algafood.domain.repository.RestauranteRepository;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -75,6 +76,8 @@ public class CadastroRestauranteService {
 
     private void merge(Map<String, Object> dadosOrigem, Restaurante restauranteAtualizar) {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES,true);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
         Restaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);
 
         dadosOrigem.forEach((nomePropriedade,valorPropriedade)->{
