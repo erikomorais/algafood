@@ -5,7 +5,7 @@ import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.exception.NegocioException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import net.bytebuddy.implementation.bytecode.Throw;
+import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,6 +27,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         Throwable rootCause = ExceptionUtils.getRootCause(ex);
         if (rootCause instanceof InvalidFormatException){
             return handleInvalidFormatException((InvalidFormatException)rootCause, headers, status, request);
+        } else  if (rootCause instanceof PropertyBindingException){
+            return handlePropertyBindingException((PropertyBindingException)rootCause, headers, status, request);
         }
         ApiErrorType apiErrorType = ApiErrorType.MENSAGEM_INCOMPREENSIVEL;
         String detail = "O corpo da requisição está inválido. Verifique erro de sintaxe.";
@@ -34,13 +36,33 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, apiError, new HttpHeaders(), status, request);
     }
 
+    private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException ex,
+                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        // Criei o método joinPath para reaproveitar em todos os métodos que precisam
+        // concatenar os nomes das propriedades (separando por ".")
+        String path = joinPath(ex.getPath());
+
+        ApiErrorType problemType = ApiErrorType.MENSAGEM_INCOMPREENSIVEL;
+        String detail = String.format("A propriedade '%s' não existe. "
+                + "Corrija ou remova essa propriedade e tente novamente.", path);
+
+        ApiError problem = createApiErrorBuilder(status, problemType, detail).build();
+
+        return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
     private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ApiErrorType apiErrorType = ApiErrorType.MENSAGEM_INCOMPREENSIVEL;
-        String path = ex.getPath().stream().map(a->a.getFieldName()).collect(Collectors.joining("."));
+        String path = joinPath(ex.getPath());
         String detail = String.format("A propriedade '%s'  recebeu o valor '%s' que é de um tipo inválido. " +
                 " Corrija e informe um valor compatível com o tipo %s",path, ex.getValue(), ex.getTargetType().getSimpleName());
         ApiError apiError = createApiErrorBuilder(status,apiErrorType,detail).build();
         return handleExceptionInternal(ex, apiError, headers, status, request);
+    }
+
+    private String joinPath(List<JsonMappingException.Reference> path) {
+        return path.stream().map(a -> a.getFieldName()).collect(Collectors.joining("."));
     }
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
