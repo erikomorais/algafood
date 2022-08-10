@@ -5,10 +5,14 @@ import com.example.algafood.domain.exception.NegocioException;
 import com.example.algafood.domain.model.Restaurante;
 import com.example.algafood.domain.service.CadastroRestauranteService;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +61,14 @@ public class RestauranteController {
     }
 
     @PatchMapping("/{idRestaurante}")
-    public Restaurante atualizarParcial( @PathVariable Long idRestaurante, @RequestBody Map<String,Object> campos){
-       return cadastroRestaurante.atualizarParcial(idRestaurante, campos);
+    public Restaurante atualizarParcial( @PathVariable Long idRestaurante,
+                                         @RequestBody Map<String,Object> campos,
+    HttpServletRequest request){
+       try {
+           return cadastroRestaurante.atualizarParcial(idRestaurante, campos);
+       }catch (IllegalArgumentException e){
+           Throwable rootCause = ExceptionUtils.getRootCause(e);
+           throw new HttpMessageNotReadableException(e.getMessage(),rootCause, new ServletServerHttpRequest(request));
+       }
     }
 }
