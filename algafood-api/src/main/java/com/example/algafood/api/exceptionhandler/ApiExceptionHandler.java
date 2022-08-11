@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
@@ -23,6 +24,15 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers,
+                                                                   HttpStatus status, WebRequest request) {
+        ApiErrorType apiErrorType = ApiErrorType.RECURSO_NAO_ENCONTRADO;
+        String detail = String.format("O recurso %s, que você tentou acessar, é inexistente.", ex.getRequestURL());
+        ApiError apiError = createApiErrorBuilder(status,apiErrorType,detail).build();
+        return handleExceptionInternal(ex,apiError,headers,status,request);
+    }
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -88,7 +98,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<?> trataEntidadeNaoEncontradaException(EntidadeNaoEncontradaException e, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
-        ApiErrorType apiErrorType = ApiErrorType.ENTIDADE_NAO_ENCONTRADA;
+        ApiErrorType apiErrorType = ApiErrorType.RECURSO_NAO_ENCONTRADO;
         String detail = e.getMessage();
         ApiError apiError = createApiErrorBuilder(status,apiErrorType,detail).build();
         return handleExceptionInternal(e, apiError, new HttpHeaders(), status, request);

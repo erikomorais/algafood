@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ApiErrorType {
-    ENTIDADE_NAO_ENCONTRADA("/entidade-nao-encontrada", "Entidade não encontrada"),
+    RECURSO_NAO_ENCONTRADO("/recurso-nao-encontrado", "Recurso não encontrado"),
     ENTIDADE_EM_USO("/entidade-em-uso","Entidade em uso" ),
     ERRO_NEGOCIO("/erro-negocio","Violação de regra de negócio" ),
     MENSAGEM_INCOMPREENSIVEL("/mensage-incompreensível","Mensagem incompreensível" ),
