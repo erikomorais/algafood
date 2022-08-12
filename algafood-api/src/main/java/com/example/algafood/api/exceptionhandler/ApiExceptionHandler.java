@@ -25,6 +25,10 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+
+    public static final String MSG_ERRO_GENERICA_USUARIO_FINAL = "Ocorreu um erro inesperadp de sistema. Tente novamente e," +
+            "se o problema persistir, contate o administrador do sistema.";
+
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers,
                                                                    HttpStatus status, WebRequest request) {
@@ -62,22 +66,23 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String detail = String.format("O parâmetro de URL '%s' recebeu o valor '%s', "
                         + "que é de um tipo inválido. Corrija e informe um valor compatível com o tipo %s.",
                 ex.getName(),ex.getValue(),ex.getParameter().getParameterType().getSimpleName());
-        ApiError apiError = createApiErrorBuilder(status, apiErrorType, detail).build();
+        ApiError apiError = createApiErrorBuilder(status, apiErrorType, detail)
+                .userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
+                .build();
         return handleExceptionInternal(ex, apiError, new HttpHeaders(), status, request);
     }
 
     private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
-
-        // Criei o método joinPath para reaproveitar em todos os métodos que precisam
-        // concatenar os nomes das propriedades (separando por ".")
         String path = joinPath(ex.getPath());
 
         ApiErrorType problemType = ApiErrorType.MENSAGEM_INCOMPREENSIVEL;
         String detail = String.format("A propriedade '%s' não existe. "
                 + "Corrija ou remova essa propriedade e tente novamente.", path);
 
-        ApiError problem = createApiErrorBuilder(status, problemType, detail).build();
+        ApiError problem = createApiErrorBuilder(status, problemType, detail)
+                .userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
+                .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
@@ -87,12 +92,24 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String path = joinPath(ex.getPath());
         String detail = String.format("A propriedade '%s'  recebeu o valor '%s' que é de um tipo inválido. " +
                 " Corrija e informe um valor compatível com o tipo %s",path, ex.getValue(), ex.getTargetType().getSimpleName());
-        ApiError apiError = createApiErrorBuilder(status,apiErrorType,detail).build();
+        ApiError apiError = createApiErrorBuilder(status,apiErrorType,detail)
+                .userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
+                .build();
         return handleExceptionInternal(ex, apiError, headers, status, request);
     }
 
     private String joinPath(List<JsonMappingException.Reference> path) {
         return path.stream().map(a -> a.getFieldName()).collect(Collectors.joining("."));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> trataErroSistema(Exception e, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        ApiErrorType apiErrorType = ApiErrorType.ERRO_DE_SISTEMA;
+        String detail = MSG_ERRO_GENERICA_USUARIO_FINAL;
+        e.printStackTrace();
+        ApiError apiError = createApiErrorBuilder(status,apiErrorType,detail).build();
+        return handleExceptionInternal(e, apiError, new HttpHeaders(), status, request);
     }
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
