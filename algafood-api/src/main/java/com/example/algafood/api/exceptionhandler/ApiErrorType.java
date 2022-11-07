@@ -9,7 +9,8 @@ public enum ApiErrorType {
     ERRO_NEGOCIO("/erro-negocio","Violação de regra de negócio" ),
     MENSAGEM_INCOMPREENSIVEL("/mensage-incompreensível","Mensagem incompreensível" ),
     PARAMETRO_INVALIDO("/parametro-invalido", "Parâmetro inválido" ),
-    ERRO_DE_SISTEMA("/erro-de-sistema", "Erro de sistema" );
+    ERRO_DE_SISTEMA("/erro-de-sistema", "Erro de sistema" ),
+    DADOS_INVALIDOS("/dados-invalidos", "Dados Inválidos" );
 
     private final String uri;
     private final String title;
