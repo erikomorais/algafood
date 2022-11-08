@@ -1,5 +1,6 @@
 package com.example.algafood.domain.model;
 
+import com.example.algafood.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class Restaurante {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotBlank
+    @NotBlank(groups = Groups.CadastroRestaurante.class)
     @Column(nullable = false)
     private String nome;
 
@@ -37,10 +38,8 @@ public class Restaurante {
     @Column(name="taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
-
-
     @Valid
-    @NotNull
+    @NotNull(groups = Groups.CadastroRestaurante.class)
     @ManyToOne
     @JoinColumn(name="cozinha_id", nullable = false)
     private Cozinha cozinha;
