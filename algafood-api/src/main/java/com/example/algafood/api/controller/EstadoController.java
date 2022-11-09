@@ -1,16 +1,16 @@
 package com.example.algafood.api.controller;
 
-import java.util.List;
-
 import com.example.algafood.domain.exception.EntidadeEmUsoException;
 import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.model.Estado;
-
 import com.example.algafood.domain.service.CadastroEstadoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -37,14 +37,14 @@ public class EstadoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Estado adicionar(@RequestBody Estado estado) {
+    public Estado adicionar(@Valid @RequestBody Estado estado) {
         estado = cadastroEstadoService.adicionar(estado);
         return estado;
 
     }
 
     @PutMapping("/{estadoId}")
-    public ResponseEntity<Estado> atualizar(@PathVariable Long estadoId ,@RequestBody Estado estado) {
+    public ResponseEntity<Estado> atualizar(@PathVariable Long estadoId ,@Valid @RequestBody Estado estado) {
         try {
             Estado estadoAtual = cadastroEstadoService.atualizar(estadoId, estado);
             return ResponseEntity.ok(estadoAtual);
