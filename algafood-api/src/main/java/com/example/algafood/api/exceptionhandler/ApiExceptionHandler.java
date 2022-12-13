@@ -1,5 +1,6 @@
 package com.example.algafood.api.exceptionhandler;
 
+import com.example.algafood.core.validation.ValidacaoException;
 import com.example.algafood.domain.exception.EntidadeEmUsoException;
 import com.example.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.example.algafood.domain.exception.NegocioException;
@@ -121,11 +122,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return handleValidationInternal(ex, ex.getBindingResult(), headers, status, request);
+    }
+
+    private ResponseEntity<Object> handleValidationInternal(Exception ex, BindingResult bindingResult, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ProblemType problemType = ProblemType.DADOS_INVALIDOS;
 
         String detail = "Um ou mais campos estão inválidos. Faça o preeenchimento correto e tente novamente.";
-        BindingResult bindingResult = ex.getBindingResult();
-
 
         List<Problem.Object> probelmFields = bindingResult.getAllErrors().stream()
                 .map(objectError -> {
@@ -147,6 +150,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
+
 
     private ResponseEntity<Object> handlePropertyBinding(PropertyBindingException ex,
                                                          HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -179,6 +183,10 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+    @ExceptionHandler(ValidacaoException.class)
+    private  ResponseEntity<Object> handleValidacaoException(ValidacaoException ex, WebRequest request){
+        return handleValidationInternal(ex,ex.getBindingResult(),new HttpHeaders(),HttpStatus.BAD_REQUEST,request );
     }
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)

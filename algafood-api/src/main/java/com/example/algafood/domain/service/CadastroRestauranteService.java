@@ -1,5 +1,6 @@
 package com.example.algafood.domain.service;
 
+import com.example.algafood.core.validation.ValidacaoException;
 import com.example.algafood.domain.exception.CozinhaNaoEncontradaException;
 import com.example.algafood.domain.exception.NegocioException;
 import com.example.algafood.domain.exception.RestauranteNaoEncontradoException;
@@ -10,9 +11,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.SmartValidator;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -26,6 +30,9 @@ public class CadastroRestauranteService {
     public static final String COZINHA_NAO_INFORMADA = "Cozinha não informada";
     private RestauranteRepository restauranteRepository;
     private CadastroCozinhaService cozinhaRepository;
+
+    @Autowired
+    private SmartValidator validator;
 
     public List<Restaurante> listar() {
         return restauranteRepository.findAll();
@@ -71,7 +78,16 @@ public class CadastroRestauranteService {
     public Restaurante atualizarParcial(Long idRestaurante, Map<String, Object> campos) {
         Restaurante restauranteAtualizar = buscar(idRestaurante);
         merge(campos,restauranteAtualizar);
+        validate(restauranteAtualizar, "restaurante");
         return atualizar(idRestaurante,restauranteAtualizar);
+    }
+
+    private void validate(Restaurante restaurante, String objectName) {
+        BeanPropertyBindingResult bindingResult =  new BeanPropertyBindingResult(restaurante,objectName);
+        validator.validate(restaurante,bindingResult);
+        if (bindingResult.hasErrors()){
+            throw new ValidacaoException(bindingResult);
+        }
     }
 
     private void merge(Map<String, Object> dadosOrigem, Restaurante restauranteAtualizar) {
