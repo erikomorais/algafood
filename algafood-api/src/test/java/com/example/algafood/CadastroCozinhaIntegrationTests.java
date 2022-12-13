@@ -1,5 +1,7 @@
 package com.example.algafood;
 
+import com.example.algafood.domain.exception.CozinhaNaoEncontradaException;
+import com.example.algafood.domain.exception.EntidadeEmUsoException;
 import com.example.algafood.domain.model.Cozinha;
 import com.example.algafood.domain.service.CadastroCozinhaService;
 import org.junit.jupiter.api.Test;
@@ -27,13 +29,29 @@ class CadastroCozinhaIntegrationTests {
 
     }
     @Test()
-    void deveFalharAoCadastrarCozinhaSemNome(){
+    void deveFalhar_AoCadastrarCozinhaSemNome(){
         Cozinha cozinha = Cozinha.builder().nome(null).build();
-        ConstraintViolationException erroEsperado = assertThrows(ConstraintViolationException.class, () -> {
-            cadastroCozinhaService.adicionar(cozinha);
-        });
+        ConstraintViolationException erroEsperado = assertThrows(ConstraintViolationException.class, () -> cadastroCozinhaService.adicionar(cozinha));
         assertThat(erroEsperado).isNotNull();
-
     }
 
+    @Test()
+    void deveFalhar_AoExcluirCozinhaEmUso(){
+        EntidadeEmUsoException erroEsperado =
+                assertThrows(EntidadeEmUsoException.class, () -> {
+                    cadastroCozinhaService.excluir(1L);
+                });
+
+        assertThat(erroEsperado).isNotNull();
+    }
+
+    @Test()
+    void deveFalhar_AoExcluirCozinhaEmInexistente(){
+        CozinhaNaoEncontradaException erroEsperado =
+                assertThrows(CozinhaNaoEncontradaException.class, () -> {
+                    cadastroCozinhaService.excluir(100L);
+                });
+
+        assertThat(erroEsperado).isNotNull();
+    }
 }
